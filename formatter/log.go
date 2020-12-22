@@ -11,29 +11,29 @@ import (
 )
 
 const (
-	panic Level = "panic"
-	fatal Level = "fatal"
-	errs  Level = "error"
-	warn  Level = "warn"
-	info  Level = "info"
-	debug Level = "debug"
+	Panic Level = "panic"
+	Fatal Level = "fatal"
+	Error  Level = "error"
+	Warn  Level = "warn"
+	Info  Level = "info"
+	Debug Level = "debug"
 )
 
 type Level string
 
 func ConfigLoglevel(logLevel Level) {
 	switch logLevel {
-	case panic:
+	case Panic:
 		log.SetLevel(log.PanicLevel)
-	case fatal:
+	case Fatal:
 		log.SetLevel(log.FatalLevel)
-	case "error":
+	case Error:
 		log.SetLevel(log.ErrorLevel)
-	case warn:
+	case Warn:
 		log.SetLevel(log.WarnLevel)
-	case info:
+	case Info:
 		log.SetLevel(log.InfoLevel)
-	case debug:
+	case Debug:
 		log.SetLevel(log.DebugLevel)
 	default:
 		log.SetLevel(log.InfoLevel)
@@ -57,9 +57,9 @@ func ConfigLoggerWithPath(logPath string,maxAge,rotationTime time.Duration) {
 		log.Errorf("config local file system logger error, %+v", errors.WithStack(err))
 		return
 	}
-	debugLfHook := newHook(logPath, debug,maxAge,rotationTime)
-	infoLfHook := newHook(logPath, info,maxAge,rotationTime)
-	errLfHook := newHook(logPath, errs,maxAge,rotationTime)
+	debugLfHook := newHook(logPath, Debug,maxAge,rotationTime)
+	infoLfHook := newHook(logPath, Info,maxAge,rotationTime)
+	errLfHook := newHook(logPath, Error,maxAge,rotationTime)
 	log.AddHook(debugLfHook)
 	log.AddHook(infoLfHook)
 	log.AddHook(errLfHook)
@@ -81,18 +81,18 @@ func newHook(logPath string, level Level,maxAge,rotationTime time.Duration) *lfs
 		rotatelogs.WithRotationTime(rotationTime), // 日志切割时间间隔
 	)
 	switch level {
-	case errs:
+	case Error:
 		writerMap = lfshook.WriterMap{
 			log.ErrorLevel: writer,
 			log.FatalLevel: writer,
 			log.PanicLevel: writer,
 		}
-	case info:
+	case Info:
 		writerMap = lfshook.WriterMap{
 			log.InfoLevel: writer,
 			log.WarnLevel: writer,
 		}
-	case debug:
+	case Debug:
 		writerMap = lfshook.WriterMap{
 			log.TraceLevel: writer,
 			log.DebugLevel: writer,
@@ -104,7 +104,7 @@ func newHook(logPath string, level Level,maxAge,rotationTime time.Duration) *lfs
 		}
 	default:
 		if level == "" {
-			return newHook(logPath, debug,maxAge,rotationTime)
+			return newHook(logPath, Debug,maxAge,rotationTime)
 		}
 	}
 	return lfshook.NewHook(writerMap, &SpdbFormatter{

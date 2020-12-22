@@ -3,7 +3,6 @@ package logger
 import (
 	"github.com/sirupsen/logrus"
 )
-
 var ipfsLogger *logrus.Entry
 
 //func AddFields(sysId, sysName, svcId, svcName, procMsg string) {
