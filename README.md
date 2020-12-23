@@ -12,6 +12,9 @@ import (
 )
 //使用案例
 func init() {
+
+    logLevel:=formatter.Debug//日志等级
+    logPath:="./log"//保存日志文件路径
 	fields := logrus.Fields{
 		"sysId":   "sysId",
 		"sysName": "sysName",
@@ -19,12 +22,9 @@ func init() {
 		"svcName": "svcName",
 		"procMsg": "procMsg",
 	}//拓展名
-	log.LoggerInit(formatter.Debug,//日志等级
-    		"./log", //log path
-    		fields,//拓展名
-    		10*time.Minute,//日志最大保存时间
-    		2*time.Minute,//日志切割时间
-    	)
+    maxAge:=10*time.Minute//日志最大保存时间
+    rotationTime:=10*time.Minute//日志切割时间
+	log.LoggerInit(logLevel, logPath, fields, maxAge, rotationTime)
 }
 ```
 # DESCRIPTION
