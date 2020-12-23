@@ -8,7 +8,7 @@ import (
 	"time"
 )
 
-func LoggerInit(logLevel formatter.Level, logPath string, fields logrus.Fields, maxAge, rotationTime time.Duration) {
+func LoggerInit(logLevel , logPath string, fields logrus.Fields, maxAge, rotationTime time.Duration) {
 	//add log fields
 	logger.AddField(fields)
 	// set log level

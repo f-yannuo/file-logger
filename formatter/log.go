@@ -11,17 +11,15 @@ import (
 )
 
 const (
-	Panic Level = "panic"
-	Fatal Level = "fatal"
-	Error  Level = "error"
-	Warn  Level = "warn"
-	Info  Level = "info"
-	Debug Level = "debug"
+	Panic  = "panic"
+	Fatal  = "fatal"
+	Error  = "error"
+	Warn   = "warn"
+	Info   = "info"
+	Debug  = "debug"
 )
 
-type Level string
-
-func ConfigLoglevel(logLevel Level) {
+func ConfigLoglevel(logLevel string) {
 	switch logLevel {
 	case Panic:
 		log.SetLevel(log.PanicLevel)
@@ -51,22 +49,22 @@ func ConfigLogFormatter() {
 	log.SetFormatter(customTextFormatter)
 }
 
-func ConfigLoggerWithPath(logPath string,maxAge,rotationTime time.Duration) {
+func ConfigLoggerWithPath(logPath string, maxAge, rotationTime time.Duration) {
 
 	if err := os.MkdirAll(logPath, os.ModePerm); err != nil {
 		log.Errorf("config local file system logger error, %+v", errors.WithStack(err))
 		return
 	}
-	debugLfHook := newHook(logPath, Debug,maxAge,rotationTime)
-	infoLfHook := newHook(logPath, Info,maxAge,rotationTime)
-	errLfHook := newHook(logPath, Error,maxAge,rotationTime)
+	debugLfHook := newHook(logPath, Debug, maxAge, rotationTime)
+	infoLfHook := newHook(logPath, Info, maxAge, rotationTime)
+	errLfHook := newHook(logPath, Error, maxAge, rotationTime)
 	log.AddHook(debugLfHook)
 	log.AddHook(infoLfHook)
 	log.AddHook(errLfHook)
 }
 
 //"/%Y-%m-%d/"
-func newHook(logPath string, level Level,maxAge,rotationTime time.Duration) *lfshook.LfsHook {
+func newHook(logPath ,level string , maxAge, rotationTime time.Duration) *lfshook.LfsHook {
 	var (
 		writerMap lfshook.WriterMap
 		ti        = //""
@@ -76,8 +74,8 @@ func newHook(logPath string, level Level,maxAge,rotationTime time.Duration) *lfs
 	writerPath := path.Join(logPath, ti+string(level)+"Writer.log")
 	writer, _ := rotatelogs.New(
 		logPath+fileName,
-		rotatelogs.WithLinkName(writerPath),        // 生成软链，指向最新日志文件
-		rotatelogs.WithMaxAge(maxAge),       // 文件最大保存时间
+		rotatelogs.WithLinkName(writerPath),       // 生成软链，指向最新日志文件
+		rotatelogs.WithMaxAge(maxAge),             // 文件最大保存时间
 		rotatelogs.WithRotationTime(rotationTime), // 日志切割时间间隔
 	)
 	switch level {
@@ -104,7 +102,7 @@ func newHook(logPath string, level Level,maxAge,rotationTime time.Duration) *lfs
 		}
 	default:
 		if level == "" {
-			return newHook(logPath, Debug,maxAge,rotationTime)
+			return newHook(logPath, Debug, maxAge, rotationTime)
 		}
 	}
 	return lfshook.NewHook(writerMap, &SpdbFormatter{
